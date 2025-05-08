@@ -1,19 +1,16 @@
 # NSShield
 
-NSShield is a lightweight Swift package that provides a specialized subclass of NSWindow designed to float over every space on macOS. It's perfect for creating notch apps, status bar utilities, and custom overlays that replicate system UI elements.
+**NSShield** is a lightweight Swift package that provides a specialized subclass of `NSWindow`, designed to float *above* every space on macOS. It’s perfect for creating notch apps, status bar utilities, and custom overlays that mimic system UI elements.
 
 ## Features
 
-- **Cross-Space Visibility**: Windows appear on all macOS spaces
-- **Always-On-Top**: Stays above other applications
-- **Simple Integration**: Drop-in replacement for NSWindow
-- **Minimal Footprint**: Single-file implementation
+**Truly floats above all spaces** — unlike `canJoinAllSpaces`, which simply makes a window *jump between* spaces as you switch, NSShield places the window in an unmanaged space that literally stays above all others. This makes it ideal for HUDs and overlays that should remain visible at all times.
 
 ## Installation
 
 ### Swift Package Manager
 
-Add the following to your `Package.swift` file's dependencies:
+Add the following to your `Package.swift` dependencies:
 
 ```swift
 dependencies: [
@@ -27,7 +24,8 @@ Then include it in your target:
 targets: [
     .target(
         name: "YourApp",
-        dependencies: ["NSShield"]),
+        dependencies: ["NSShield"]
+    ),
 ]
 ```
 
@@ -47,18 +45,18 @@ let window = NSShield(
 // Set up your window as needed
 window.contentView = YourCustomView()
 
-// Show the window - this automatically applies the shield properties
-window.makeKeyAndOrderFront(nil)
+// Just like a regular NSWindow
+window.makeKeyAndOrderFront(nil) // This also applies the shield behavior
 ```
 
 ## How It Works
 
-NSShield leverages private CoreGraphics Space APIs to create a window that appears across all spaces and maintains its position above other windows. When `makeKeyAndOrderFront(_:)` is called, NSShield automatically applies the necessary properties to make the window float across spaces.
+NSShield leverages private CoreGraphics space APIs to create an **unmanaged space**, position it *above* all standard (managed) spaces — like the ones shown in Mission Control — and move your window into it. This all happens automatically when you call `makeKeyAndOrderFront(_:)`, or manually via the `makeShield()` method.
 
 ## Inspiration
 
-NSShield was inspired by [SketchyBar](https://github.com/FelixKratz/SketchyBar), a customizable macOS status bar replacement.
+NSShield was inspired by [SketchyBar](https://github.com/FelixKratz/SketchyBar), a customizable macOS status bar replacement, and by my own project [OverAll](https://github.com/AlexStrNik/OverAll), which brings similar functionality to any window from any app.
 
 ## Disclaimer
 
-This package uses private macOS APIs which are not officially supported by Apple. While it works with current macOS versions, future updates might break functionality. Use in production applications at your own risk.
+This package uses **private macOS APIs**, which are not officially supported by Apple. While it works on current macOS versions, future updates may break its functionality. Use in production at your own risk.
